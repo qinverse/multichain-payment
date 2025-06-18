@@ -11,10 +11,20 @@
 
     <artifactId>payment-service</artifactId>
 
-    <properties>
-        <maven.compiler.source>19</maven.compiler.source>
-        <maven.compiler.target>19</maven.compiler.target>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-    </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>com.payment</groupId>
+            <artifactId>payment-common</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>com.payment</groupId>
+            <artifactId>payment-dao</artifactId>
+        </dependency>
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
+    </dependencies>
 
 </project>

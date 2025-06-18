@@ -1,10 +1,10 @@
 package com.payment.conroller;
 
-import com.wallet.service.MultichainTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import com.payment.service.MultichainTransactionService;
 
 @RestController
 @RequestMapping("/api/wallet")

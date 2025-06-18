@@ -9,21 +9,25 @@
         <version>1.0.0</version>
     </parent>
 
-    <artifactId>payment-service</artifactId>
+    <artifactId>payment-component</artifactId>
 
-
+    <properties>
+        <maven.compiler.source>17</maven.compiler.source>
+        <maven.compiler.target>17</maven.compiler.target>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    </properties>
     <dependencies>
+        <dependency>
+            <groupId>org.web3j</groupId>
+            <artifactId>core</artifactId>
+        </dependency>
         <dependency>
             <groupId>com.payment</groupId>
             <artifactId>payment-common</artifactId>
         </dependency>
         <dependency>
             <groupId>com.payment</groupId>
-            <artifactId>payment-dao</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>com.payment</groupId>
-            <artifactId>payment-component</artifactId>
+            <artifactId>payment-model</artifactId>
         </dependency>
     </dependencies>
 

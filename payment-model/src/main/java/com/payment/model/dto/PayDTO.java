@@ -5,6 +5,7 @@ import lombok.Data;
 import lombok.EqualsAndHashCode;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 
 /**
  * <p>
@@ -42,6 +43,11 @@ public class PayDTO implements Serializable {
      * 商户id
      */
     private String merchantId;
+
+    private String chain;
+    private String privateKey;
+    private String toAddress;
+    private BigDecimal amount;
 
 
 }

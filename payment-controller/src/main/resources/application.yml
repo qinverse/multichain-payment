@@ -4,3 +4,8 @@ server:
 spring:
   application:
     name: multichain-payment
+rocketmq:
+  name-server: 127.0.0.1:9876
+  producer:
+    group: multichain-pay
+    sendMessageTimeout: 300000

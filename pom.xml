@@ -17,6 +17,7 @@
         <module>payment-service</module>
         <module>payment-controller</module>
         <module>payment-dao</module>
+        <module>payment-component</module>
     </modules>
 
     <properties>
@@ -104,10 +105,15 @@
                 <version>${project.version}</version>
             </dependency>
             <dependency>
-            <groupId>com.payment</groupId>
-            <artifactId>payment-service</artifactId>
-            <version>${project.version}</version>
-        </dependency>
+                <groupId>com.payment</groupId>
+                <artifactId>payment-service</artifactId>
+                <version>${project.version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.payment</groupId>
+                <artifactId>payment-component</artifactId>
+                <version>${project.version}</version>
+            </dependency>
 
             <dependency>
                 <groupId>com.baomidou</groupId>

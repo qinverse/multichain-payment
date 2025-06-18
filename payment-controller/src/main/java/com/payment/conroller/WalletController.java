@@ -1,4 +1,4 @@
-package com.wallet.controller;
+package com.payment.conroller;
 
 import com.wallet.service.MultichainTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;

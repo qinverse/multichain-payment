@@ -1,4 +1,4 @@
-package com.wallet.controller;
+package com.payment.conroller;
 
 import com.wallet.service.Erc20Service;
 import org.springframework.beans.factory.annotation.Autowired;

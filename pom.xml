@@ -29,6 +29,7 @@
         <rocket.version>2.1.1</rocket.version>
         <mongodb.version>3.1.8</mongodb.version>
         <cassandra.version>3.1.8</cassandra.version>
+        <lombok.version>1.18.30</lombok.version>
     </properties>
 
     <dependencies>
@@ -76,13 +77,8 @@
         <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
-            <version>1.18.16</version>
+            <version>${lombok.version}</version>
         </dependency>
-        <dependency>
-            <groupId>com.payment</groupId>
-            <artifactId>payment-service</artifactId>
-        </dependency>
-
         <!-- <dependency>
              <groupId>ch.qos.logback</groupId>
              <artifactId>logback-classic</artifactId>

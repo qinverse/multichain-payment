@@ -9,10 +9,19 @@ import lombok.Data;
  */
 @Data
 public class PayQueryDTO {
+
+    private String paySeq;
+
     private String chain;
 
     /**
      * 第三方唯一标识或者连上的交易hash码
      */
     private  String thirdIdentify;
+
+    private Integer currentQuery;
+    /**
+     * 下次查询时间
+     */
+    private Integer nextQuery;
 }

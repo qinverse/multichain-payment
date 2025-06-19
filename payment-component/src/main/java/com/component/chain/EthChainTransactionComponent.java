@@ -1,6 +1,7 @@
 package com.component.chain;
 
-import com.component.PayStrategy;
+import com.alibaba.fastjson.JSONObject;
+import com.component.IPayStrategy;
 import com.payment.common.base.PayOrderStatusEnum;
 import com.payment.model.dto.PayDTO;
 import com.payment.model.dto.PayQueryDTO;
@@ -9,6 +10,7 @@ import com.payment.model.dto.PayResultDTO;
 import org.springframework.stereotype.Service;
 import org.web3j.crypto.Credentials;
 import org.web3j.protocol.Web3j;
+import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.Transfer;
@@ -18,13 +20,14 @@ import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.Map;
 
-@Service
-public class ChainTransactionComponent implements PayStrategy {
+
+@Service("eth")
+public class EthChainTransactionComponent implements IPayStrategy {
 
     private final Map<String, Web3j> chainWeb3Map = new HashMap<>();
 
 
-    public ChainTransactionComponent() {
+    public EthChainTransactionComponent() {
         chainWeb3Map.put("eth", Web3j.build(new HttpService("https://sepolia.infura.io/v3/23599b1b46fa40c99a81c4a376c8fdba")));
         chainWeb3Map.put("bsc", Web3j.build(new HttpService("https://bsc-testnet.infura.io/v3/23599b1b46fa40c99a81c4a376c8fdba")));
         chainWeb3Map.put("polygon", Web3j.build(new HttpService("https://polygon-amoy.infura.io/v3/23599b1b46fa40c99a81c4a376c8fdba")));
@@ -34,7 +37,6 @@ public class ChainTransactionComponent implements PayStrategy {
     public String sendTransaction(String chain, String privateKey, String toAddress, BigDecimal amount) throws Exception {
         Web3j web3 = chainWeb3Map.get(chain.toLowerCase());
         if (web3 == null) throw new IllegalArgumentException("Unsupported chain");
-
         Credentials credentials = Credentials.create(privateKey);
         TransactionReceipt receipt = Transfer.sendFunds(
             web3, credentials, toAddress, amount, Convert.Unit.ETHER).send();
@@ -57,9 +59,9 @@ public class ChainTransactionComponent implements PayStrategy {
             Credentials credentials = Credentials.create(payDTo.getPrivateKey());
             TransactionReceipt receipt = Transfer.sendFunds(
                     web3, credentials, payDTo.getToAddress(), payDTo.getAmount(), Convert.Unit.ETHER).send();
-            dto.setStatus(PayOrderStatusEnum.PAY_PENDING.getValue());
+            dto.setStatus(PayOrderStatusEnum.PAY_LISTENLING.getValue());
             dto.setThirdIdentify(receipt.getTransactionHash());
-            dto.setFee(new BigDecimal(receipt.getEffectiveGasPrice()));
+            dto.setFee(Convert.fromWei(String.valueOf(receipt.getGasUsed().intValue()), Convert.Unit.WEI));
             return dto;
         } catch (Exception e) {
             dto.setStatus(PayOrderStatusEnum.PAY_PENDING.getValue());
@@ -75,12 +77,20 @@ public class ChainTransactionComponent implements PayStrategy {
             Web3j web3 = chainWeb3Map.get(payQueryDTO.getChain().toLowerCase());
             if (web3 == null) throw new IllegalArgumentException("Unsupported chain");
 
-
-            TransactionReceipt receipt = Transfer.sendFunds(
-                    web3, credentials, payDTo.getToAddress(), payDTo.getAmount(), Convert.Unit.ETHER).send();
-            dto.setStatus(PayOrderStatusEnum.PAY_PENDING.getValue());
-            dto.setThirdIdentify(receipt.getTransactionHash());
-            dto.setFee(new BigDecimal(receipt.getEffectiveGasPrice()));
+            EthGetTransactionReceipt transactionReceipt = web3.ethGetTransactionReceipt(payQueryDTO.getThirdIdentify()).send();
+             if (!transactionReceipt.getTransactionReceipt().isPresent()) {
+                 dto.setStatus(PayOrderStatusEnum.PAY_PENDING.getValue());
+                 dto.setMsg("未查询到结果，支付结果未知");
+                 return dto;
+             }
+            TransactionReceipt receipt = transactionReceipt.getTransactionReceipt().get();
+             if (!receipt.isStatusOK()) {
+                 dto.setStatus(PayOrderStatusEnum.PAY_FAIL.getValue());
+                 dto.setMsg(JSONObject.toJSONString(receipt.getLogs()));
+                 return dto;
+             }
+              dto.setStatus(PayOrderStatusEnum.PAY_SUCCESS.getValue());
+             dto.setFee(Convert.fromWei(String.valueOf(receipt.getGasUsed().intValue()), Convert.Unit.WEI));
             return dto;
         } catch (Exception e) {
             dto.setStatus(PayOrderStatusEnum.PAY_PENDING.getValue());

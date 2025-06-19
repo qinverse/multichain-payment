@@ -10,7 +10,8 @@ package com.payment.common.base;
  */
 public enum  PayOrderStatusEnum {
 
-    PAY_PENDING(1, "等待支付中"),
+    PAY_PENDING(0, "等待支付中"),
+    PAY_LISTENLING(1, "支付发进行中"),
     PAY_SUCCESS(2, "支付成功"),
     PAY_FAIL(-1,"支付失败"),
     PAY_TRADE_CLOSE(3, "未付款交易超时关闭，或支付完成后全额退款"),

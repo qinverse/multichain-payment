@@ -1,8 +1,9 @@
-package com.wallet.entity;
+package com.payment.model.entity;
 
 import lombok.Data;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 /**
@@ -52,7 +53,7 @@ public class PaySeqEntity implements Serializable {
      *
      * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
      */
-    private Long payAmount;
+    private BigDecimal payAmount;
 
     /**
      * 其他费用例如gas
@@ -60,7 +61,7 @@ public class PaySeqEntity implements Serializable {
      *
      * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
      */
-    private Long fee;
+    private BigDecimal fee;
 
     /**
      * 支付状态 0发起 1 支付中 2 支付成功 3 支付失败
@@ -68,7 +69,7 @@ public class PaySeqEntity implements Serializable {
      *
      * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
      */
-    private Byte status;
+    private Integer status;
 
     /**
      * 支付类别，1rmb支付 2 eth
@@ -76,7 +77,7 @@ public class PaySeqEntity implements Serializable {
      *
      * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
      */
-    private Long type;
+    private Integer type;
 
     /**
      * 支付参数
@@ -108,7 +109,7 @@ public class PaySeqEntity implements Serializable {
      *
      * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
      */
-    private Byte queryCount;
+    private Integer queryCount;
 
     /**
      * 账单日
@@ -125,6 +126,11 @@ public class PaySeqEntity implements Serializable {
      * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
      */
     private Date modifyTime;
+
+    /**
+     * 支付方式
+     */
+    private String payWay;
 
     /**
      *

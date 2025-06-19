@@ -24,4 +24,5 @@ public class PayRequestResultDTO {
      * 手续费
      */
     private BigDecimal fee;
+
 }

@@ -6,7 +6,7 @@ import com.payment.model.dto.PayQueryDTO;
 import com.payment.model.dto.PayRequestResultDTO;
 import com.payment.model.dto.PayResultDTO;
 
-public interface PayStrategy {
+public interface IPayStrategy {
 
     PayRequestResultDTO doPay(PayDTO payDTo);
 

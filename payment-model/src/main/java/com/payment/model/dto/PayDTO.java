@@ -25,19 +25,9 @@ public class PayDTO implements Serializable {
     private static final long serialVersionUID = 1L;
 
     /**
-     * 支付方式名称
-     */
-    private String channelName;
-
-    /**
      * 支付方式code
      */
     private String channelCode;
-
-    /**
-     * 支付策略类，用于策略模式实现
-     */
-    private String strategyBean;
     
     /**
      * 商户id
@@ -49,5 +39,6 @@ public class PayDTO implements Serializable {
     private String toAddress;
     private BigDecimal amount;
 
+    private String from;
 
 }

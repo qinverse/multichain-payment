@@ -1,7 +1,7 @@
-package com.component.chain;
+package com.payment.component.chain;
 
 import com.alibaba.fastjson.JSONObject;
-import com.component.IPayStrategy;
+import com.payment.component.IPayStrategy;
 import com.payment.common.base.PayOrderStatusEnum;
 import com.payment.model.dto.PayDTO;
 import com.payment.model.dto.PayQueryDTO;
@@ -53,7 +53,7 @@ public class EthChainTransactionComponent implements IPayStrategy {
     public PayRequestResultDTO doPay(PayDTO payDTo) {
         PayRequestResultDTO dto = new PayRequestResultDTO();
         try {
-            Web3j web3 = chainWeb3Map.get(payDTo.getChain().toLowerCase());
+            Web3j web3 = chainWeb3Map.get(payDTo.getChannelCode().toLowerCase());
             if (web3 == null) throw new IllegalArgumentException("Unsupported chain");
 
             Credentials credentials = Credentials.create(payDTo.getPrivateKey());

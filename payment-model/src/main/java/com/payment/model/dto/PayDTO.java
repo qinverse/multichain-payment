@@ -33,8 +33,6 @@ public class PayDTO implements Serializable {
      * 商户id
      */
     private String merchantId;
-
-    private String chain;
     private String privateKey;
     private String toAddress;
     private BigDecimal amount;

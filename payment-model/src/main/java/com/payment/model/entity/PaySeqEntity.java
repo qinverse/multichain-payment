@@ -1,5 +1,7 @@
 package com.payment.model.entity;
 
+import com.baomidou.mybatisplus.annotation.TableId;
+import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -14,6 +16,7 @@ import java.util.Date;
  * @author 
  */
 @Data
+@TableName(value = "pay_seq")
 public class PaySeqEntity implements Serializable {
     /**
      * 支付流水
@@ -21,6 +24,7 @@ public class PaySeqEntity implements Serializable {
      *
      * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
      */
+    @TableId
     private String paySeq;
 
     /**
@@ -77,7 +81,7 @@ public class PaySeqEntity implements Serializable {
      *
      * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
      */
-    private Integer type;
+    private String type;
 
     /**
      * 支付参数
@@ -126,11 +130,6 @@ public class PaySeqEntity implements Serializable {
      * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
      */
     private Date modifyTime;
-
-    /**
-     * 支付方式
-     */
-    private String payWay;
 
     /**
      *

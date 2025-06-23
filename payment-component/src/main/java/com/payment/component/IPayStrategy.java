@@ -1,4 +1,4 @@
-package com.component;
+package com.payment.component;
 
 
 import com.payment.model.dto.PayDTO;

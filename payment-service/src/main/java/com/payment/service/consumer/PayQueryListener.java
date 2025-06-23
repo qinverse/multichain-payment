@@ -1,10 +1,10 @@
 package com.payment.service.consumer;
 
-import com.component.IPayStrategy;
-import com.component.spring.SpringContextUtil;
+import com.payment.component.IPayStrategy;
+import com.payment.component.spring.SpringContextUtil;
 import com.payment.common.base.DelayLevelEnum;
 import com.payment.common.base.PayOrderStatusEnum;
-import com.payment.dao.PaySeqMapper;
+import com.payment.mapper.PaySeqMapper;
 import com.payment.model.dto.PayQueryDTO;
 import com.payment.model.dto.PayResultDTO;
 import com.payment.model.dto.mq.MqGroup;
@@ -44,9 +44,9 @@ public class PayQueryListener implements RocketMQListener<PayQueryDTO> {
             log.error("本地订单异常，查询不到-{}", message);
             return;
         }
-        IPayStrategy strategy = SpringContextUtil.getBeanByName(entity.getPayWay());
+        IPayStrategy strategy = SpringContextUtil.getBeanByName(entity.getType());
         PayQueryDTO dto = new PayQueryDTO();
-        dto.setChain(entity.getPayWay());
+        dto.setChain(entity.getType());
         dto.setThirdIdentify(entity.getThirdIdentify());
         if (PayOrderStatusEnum.PAY_SUCCESS.getValue() == entity.getStatus()
                 || PayOrderStatusEnum.PAY_FAIL.getValue() == entity.getStatus()

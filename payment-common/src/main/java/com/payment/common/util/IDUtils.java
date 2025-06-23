@@ -4,6 +4,7 @@ import cn.hutool.core.lang.Snowflake;
 import cn.hutool.core.util.IdUtil;
 
 import java.net.InetAddress;
+import java.time.ZoneId;
 
 /**
  * 随机ID工具类生成
@@ -19,14 +20,14 @@ public class IDUtils {
     }
 
     public static String snowFlakeIdGenerator() {
-        String date = java.time.LocalDate.now().format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE); // yyyyMMdd
+        String date = java.time.LocalDate.now(ZoneId.systemDefault()).format(java.time.format.DateTimeFormatter.BASIC_ISO_DATE); // yyyyMMdd
         return date + getSnowflake(1).nextId();
     }
 
     private static int getWorkerIdByIP() {
         try {
             String ip = InetAddress.getLocalHost().getHostAddress();
-            return ip.hashCode() & 1023; // 取低 10 位，最多支持 1024 台
+            return ip.hashCode() & 31; // 取低 10 位，最多支持 32 台
         } catch (Exception e) {
             throw new RuntimeException("无法获取本机 IP", e);
         }

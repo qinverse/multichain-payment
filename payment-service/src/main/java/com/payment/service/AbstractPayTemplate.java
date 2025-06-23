@@ -1,11 +1,11 @@
 package com.payment.service;
 
-import com.component.IPayStrategy;
-import com.component.spring.SpringContextUtil;
+import com.payment.component.IPayStrategy;
+import com.payment.component.spring.SpringContextUtil;
 import com.payment.common.base.DelayLevelEnum;
 import com.payment.common.base.PayOrderStatusEnum;
 import com.payment.common.util.IDUtils;
-import com.payment.dao.PaySeqMapper;
+import com.payment.mapper.PaySeqMapper;
 import com.payment.model.dto.PayDTO;
 import com.payment.model.dto.PayQueryDTO;
 import com.payment.model.dto.PayRequestResultDTO;
@@ -42,7 +42,8 @@ public abstract class AbstractPayTemplate {
         entity.setReceiveAccount(dto.getToAddress());
         entity.setModifyTime(new Date());
         entity.setStatus(PayOrderStatusEnum.PAY_PENDING.getValue());
-        entity.setPayWay(dto.getChannelCode());
+        entity.setQueryCount(0);
+        entity.setType(dto.getChannelCode());
         paySeqMapper.insert(entity);
         IPayStrategy strategy = SpringContextUtil.getBeanByName(dto.getChannelCode());
         PayRequestResultDTO payRequestResultDTO = strategy.doPay(dto);
@@ -59,7 +60,7 @@ public abstract class AbstractPayTemplate {
     private void sendOrderedDelayMessage(PaySeqEntity entity) {
         PayQueryDTO payQueryDTO = new PayQueryDTO();
         payQueryDTO.setPaySeq(entity.getPaySeq());
-        payQueryDTO.setChain(entity.getPayWay());
+        payQueryDTO.setChain(entity.getType());
         payQueryDTO.setThirdIdentify(entity.getThirdIdentify());
         payQueryDTO.setCurrentQuery(DelayLevelEnum.LEVEL_6.getLevel());
         payQueryDTO.setNextQuery(DelayLevelEnum.LEVEL_9.getLevel());

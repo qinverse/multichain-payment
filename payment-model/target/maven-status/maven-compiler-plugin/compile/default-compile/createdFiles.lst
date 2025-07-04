@@ -1,8 +1,0 @@
-com\payment\model\dto\mq\MqTopic.class
-com\payment\model\dto\PayDTO.class
-com\payment\model\dto\PayRequestResultDTO.class
-com\payment\model\dto\mq\MqGroup.class
-com\payment\model\dto\PayResultDTO.class
-com\payment\model\dto\PaySuccessDTO.class
-com\payment\model\dto\PayQueryDTO.class
-com\payment\model\entity\PaySeqEntity.class

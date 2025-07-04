@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
-import { ethers } from 'ethers';
+// v6 新用法
+import { BrowserProvider, parseEther } from 'ethers';
+
 
 function App() {
   const [account, setAccount] = useState('');
@@ -42,13 +44,13 @@ function App() {
     setOrderNo(order.orderNo);
 
     // 2. 使用 ethers.js 发起转账
-    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const provider = new BrowserProvider(window.ethereum);
     const signer = provider.getSigner();
 
     try {
       const tx = await signer.sendTransaction({
         to: merchantAddress,
-        value: ethers.utils.parseEther(amount),
+        value: parseEther(amount),
       });
       alert('交易已发出，交易哈希: ' + tx.hash);
 

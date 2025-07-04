@@ -1,0 +1,42 @@
+package com.payment.model.dto;
+
+
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+
+import java.io.Serializable;
+import java.math.BigDecimal;
+
+/**
+ * <p>
+ * 支付方式
+ * </p>
+ *
+ @author qwl
+ * @version V1.0
+ * @contact
+ * @date 2020-06-09
+
+ */
+@Data
+@EqualsAndHashCode
+public class PayDTO implements Serializable {
+
+    private static final long serialVersionUID = 1L;
+
+    /**
+     * 支付方式code
+     */
+    private String channelCode;
+    
+    /**
+     * 商户id
+     */
+    private String merchantId;
+    private String privateKey;
+    private String toAddress;
+    private BigDecimal amount;
+
+    private String from;
+
+}

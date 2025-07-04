@@ -2,3 +2,4 @@
 /logs/
 /target/
 /*.iml
+/payment-common/target/

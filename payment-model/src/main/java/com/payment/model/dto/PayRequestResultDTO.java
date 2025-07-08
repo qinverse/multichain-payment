@@ -25,4 +25,6 @@ public class PayRequestResultDTO {
      */
     private BigDecimal fee;
 
+    private String toAddress;
+
 }

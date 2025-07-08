@@ -50,9 +50,12 @@ public abstract class AbstractPayTemplate {
         //更新支付状态为listening
         entity.setStatus(payRequestResultDTO.getStatus());
         entity.setThirdIdentify(payRequestResultDTO.getThirdIdentify());
+        entity.setReceiveAccount(payRequestResultDTO.getToAddress());
         paySeqMapper.updateById(entity);
         PayResultDTO payResultDTO = new PayResultDTO();
         payResultDTO.setStatus(payResultDTO.getStatus());
+        payResultDTO.setPaySeq(entity.getPaySeq());
+        payResultDTO.setToAddress(payRequestResultDTO.getToAddress());
         sendOrderedDelayMessage(entity);
         return payResultDTO;
     }
@@ -72,4 +75,10 @@ public abstract class AbstractPayTemplate {
 
 
     abstract void checkParam(PayDTO dto);
+
+    public void updateTxtHash(PaySeqEntity paySeq) {
+        PaySeqEntity lo = paySeqMapper.selectById(paySeq.getPaySeq());
+        lo.setThirdIdentify(paySeq.getThirdIdentify());
+        paySeqMapper.updateById(lo);
+    }
 }

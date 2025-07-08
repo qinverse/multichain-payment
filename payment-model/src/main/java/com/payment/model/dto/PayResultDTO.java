@@ -21,4 +21,7 @@ public class PayResultDTO {
      * 手续费
      */
     private BigDecimal fee;
+
+    private String paySeq;
+    private String toAddress;
 }

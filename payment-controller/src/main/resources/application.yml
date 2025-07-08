@@ -34,3 +34,5 @@ mybatis-plus:
   global-config:
     db-config:
       where-strategy: not_empty
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

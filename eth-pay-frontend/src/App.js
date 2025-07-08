@@ -5,9 +5,9 @@ import { BrowserProvider, parseEther } from 'ethers';
 
 function App() {
   const [account, setAccount] = useState('');
-  const [amount, setAmount] = useState('0.01'); // 默认0.01 ETH
+  const [amount, setAmount] = useState('0.001'); // 默认0.001 ETH
   const [orderNo, setOrderNo] = useState('');
-  const merchantAddress = '0xYourMerchantAddress'; // 你的收款地址
+  const [merchantAddress, setMerchantAddress] = useState('');
 
   // 连接钱包
   async function connectWallet() {
@@ -35,17 +35,18 @@ function App() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        userAddress: account,
-        toAddress: merchantAddress,
+        channelCode: 'eth',
+        from: account,
         amount: parseFloat(amount),
       }),
     });
     const order = await createRes.json();
-    setOrderNo(order.orderNo);
+    setOrderNo(order.paySeq);
+    setMerchantAddress(order.toAddress);
 
     // 2. 使用 ethers.js 发起转账
     const provider = new BrowserProvider(window.ethereum);
-    const signer = provider.getSigner();
+    const signer = await provider.getSigner();
 
     try {
       const tx = await signer.sendTransaction({
@@ -58,7 +59,7 @@ function App() {
       await fetch('/api/order/updateTxHash', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ orderNo: order.orderNo, txHash: tx.hash }),
+        body: JSON.stringify({ paySeq: order.paySeq, thirdIdentify: tx.hash }),
       });
     } catch (err) {
       alert('交易发送失败：' + err.message);

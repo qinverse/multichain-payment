@@ -26,6 +26,11 @@ public class EthChainTransactionComponent implements IPayStrategy {
 
     private final Map<String, Web3j> chainWeb3Map = new HashMap<>();
 
+    /**
+     * 做成配置
+     */
+    private String toAddress = "0xe3a6E3935E65613C7DE0DB4586dcc91a32A03c41";
+
 
     public EthChainTransactionComponent() {
         chainWeb3Map.put("eth", Web3j.build(new HttpService("https://sepolia.infura.io/v3/23599b1b46fa40c99a81c4a376c8fdba")));
@@ -52,22 +57,26 @@ public class EthChainTransactionComponent implements IPayStrategy {
     @Override
     public PayRequestResultDTO doPay(PayDTO payDTo) {
         PayRequestResultDTO dto = new PayRequestResultDTO();
-        try {
-            Web3j web3 = chainWeb3Map.get(payDTo.getChannelCode().toLowerCase());
-            if (web3 == null) throw new IllegalArgumentException("Unsupported chain");
-
-            Credentials credentials = Credentials.create(payDTo.getPrivateKey());
-            TransactionReceipt receipt = Transfer.sendFunds(
-                    web3, credentials, payDTo.getToAddress(), payDTo.getAmount(), Convert.Unit.ETHER).send();
-            dto.setStatus(PayOrderStatusEnum.PAY_LISTENLING.getValue());
-            dto.setThirdIdentify(receipt.getTransactionHash());
-            dto.setFee(Convert.fromWei(String.valueOf(receipt.getGasUsed().intValue()), Convert.Unit.WEI));
-            return dto;
-        } catch (Exception e) {
-            dto.setStatus(PayOrderStatusEnum.PAY_PENDING.getValue());
+        dto.setStatus(PayOrderStatusEnum.PAY_PENDING.getValue());
             dto.setMsg("链上转账异常，支付结果未知");
+            dto.setToAddress(toAddress);
             return dto;
-        }
+//        try {
+//            Web3j web3 = chainWeb3Map.get(payDTo.getChannelCode().toLowerCase());
+//            if (web3 == null) throw new IllegalArgumentException("Unsupported chain");
+//
+//            Credentials credentials = Credentials.create(payDTo.getPrivateKey());
+//            TransactionReceipt receipt = Transfer.sendFunds(
+//                    web3, credentials, payDTo.getToAddress(), payDTo.getAmount(), Convert.Unit.ETHER).send();
+//            dto.setStatus(PayOrderStatusEnum.PAY_LISTENLING.getValue());
+//            dto.setThirdIdentify(receipt.getTransactionHash());
+//            dto.setFee(Convert.fromWei(String.valueOf(receipt.getGasUsed().intValue()), Convert.Unit.WEI));
+//            return dto;
+//        } catch (Exception e) {
+//            dto.setStatus(PayOrderStatusEnum.PAY_PENDING.getValue());
+//            dto.setMsg("链上转账异常，支付结果未知");
+//            return dto;
+//        }
     }
 
     @Override

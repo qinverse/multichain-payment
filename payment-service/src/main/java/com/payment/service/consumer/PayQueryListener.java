@@ -20,14 +20,16 @@ import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
+
 /**
  * @author qinverse
  * @date 2025/6/18 17:12
  * @description PayQueryListener 类描述
  */
 @Slf4j
-@Service
-@RocketMQMessageListener(consumerGroup = MqGroup.GROUP_MULTICHAIN_PAY, topic = MqTopic.PAY_SUCCESS_TOPIC)
+//@Service
+//@RocketMQMessageListener(consumerGroup = MqGroup.GROUP_MULTICHAIN_PAY, topic = MqTopic.PAY_SUCCESS_TOPIC)
 public class PayQueryListener implements RocketMQListener<PayQueryDTO> {
 
     @Autowired
@@ -44,6 +46,7 @@ public class PayQueryListener implements RocketMQListener<PayQueryDTO> {
             log.error("本地订单异常，查询不到-{}", message);
             return;
         }
+        Integer prevStatus = entity.getStatus();
         IPayStrategy strategy = SpringContextUtil.getBeanByName(entity.getType());
         PayQueryDTO dto = new PayQueryDTO();
         dto.setChain(entity.getType());
@@ -57,6 +60,7 @@ public class PayQueryListener implements RocketMQListener<PayQueryDTO> {
         PayResultDTO payResultDTO = strategy.queryPay(dto);
         if (PayOrderStatusEnum.PAY_SUCCESS.getValue() == payResultDTO.getStatus()) {
             entity.setStatus(PayOrderStatusEnum.PAY_SUCCESS.getValue());
+            entity.setFee(payResultDTO.getFee());
         } else if (PayOrderStatusEnum.PAY_FAIL.getValue() == payResultDTO.getStatus()) {
             entity.setStatus(PayOrderStatusEnum.PAY_FAIL.getValue());
         } else if (message.getNextQuery() == null) {
@@ -76,6 +80,9 @@ public class PayQueryListener implements RocketMQListener<PayQueryDTO> {
             Message<PayQueryDTO> messageTo = MessageBuilder.withPayload(message).build();
             SendResult result = rocketMQTemplate.syncSend(MqTopic.PAY_QUERY_topic, messageTo, 3000L, message.getCurrentQuery());
             log.info("发送异步查询消息seq-> {}, msgId-> {}", entity.getPaySeq(), result.getMsgId());
+        }
+        if (!Objects.equals(prevStatus,entity.getStatus())) {
+            paySeqMapper.updateById(entity);
         }
 
     }

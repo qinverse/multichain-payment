@@ -15,8 +15,11 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
 import org.web3j.protocol.http.HttpService;
 import org.web3j.tx.Transfer;
 import org.web3j.utils.Convert;
+import org.web3j.utils.Numeric;
 
 import java.math.BigDecimal;
+import java.math.BigInteger;
+import java.math.RoundingMode;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -98,8 +101,16 @@ public class EthChainTransactionComponent implements IPayStrategy {
                  dto.setMsg(JSONObject.toJSONString(receipt.getLogs()));
                  return dto;
              }
-              dto.setStatus(PayOrderStatusEnum.PAY_SUCCESS.getValue());
-             dto.setFee(Convert.fromWei(String.valueOf(receipt.getGasUsed().intValue()), Convert.Unit.WEI));
+            dto.setStatus(PayOrderStatusEnum.PAY_SUCCESS.getValue());
+            BigInteger gasUsed = receipt.getGasUsed();
+            BigInteger effectiveGasPrice = Numeric.decodeQuantity(receipt.getEffectiveGasPrice()); // or receipt.getEffectiveGasPrice() if it's already BigInteger
+            BigInteger totalFeeInWei = gasUsed.multiply(effectiveGasPrice);
+
+            // 转成 ETH
+            BigDecimal feeEth = new BigDecimal(totalFeeInWei).divide(BigDecimal.TEN.pow(18), 18, RoundingMode.HALF_UP);
+            System.out.println("实际手续费: " + feeEth + " ETH");
+
+            dto.setFee(feeEth);
             return dto;
         } catch (Exception e) {
             dto.setStatus(PayOrderStatusEnum.PAY_PENDING.getValue());

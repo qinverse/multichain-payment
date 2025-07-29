@@ -29,7 +29,7 @@ public abstract class AbstractPayTemplate {
     @Autowired
     protected PaySeqMapper paySeqMapper;
 
-    @Autowired
+//    @Autowired
     private RocketMQTemplate rocketMQTemplate;
 
     public PayResultDTO toPay(PayDTO dto) {

@@ -24,7 +24,7 @@ spring:
       min-evictable-idle-time-millis: 300000
 
 rocketmq:
-  name-server: 127.0.0.1:9876
+  name-server: 192.168.187.135:9876
   producer:
     group: multichain-pay
     sendMessageTimeout: 300000

@@ -24,4 +24,8 @@ public class PayQueryDTO {
      * 下次查询时间
      */
     private Integer nextQuery;
+
+    private Long nextScanTime; // 下一次允许扫描的时间戳
+
+    private Integer scanCount; // 已扫描次数
 }

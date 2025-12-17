@@ -3,6 +3,7 @@ package com.payment.model.dto;
 import lombok.Data;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 /**
  * @author qinverse
@@ -24,4 +25,8 @@ public class PayResultDTO {
 
     private String paySeq;
     private String toAddress;
+    private Long blockNumber;
+
+    /** 链上确认时间 */
+    private LocalDateTime confirmedAt;
 }

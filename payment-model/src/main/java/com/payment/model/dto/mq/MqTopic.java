@@ -15,5 +15,5 @@ public class MqTopic {
     /**
      * 支付查询
      */
-    public static final String PAY_QUERY_topic = "multichan_payment_pay_query_topic";
+    public static final String PAY_QUERY_TOPIC = "multichan_payment_pay_query_topic";
 }

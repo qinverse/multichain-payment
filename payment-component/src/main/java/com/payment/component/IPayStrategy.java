@@ -1,10 +1,10 @@
 package com.payment.component;
 
 
-import com.payment.model.dto.PayDTO;
-import com.payment.model.dto.PayQueryDTO;
-import com.payment.model.dto.PayRequestResultDTO;
-import com.payment.model.dto.PayResultDTO;
+import com.payment.model.dto.*;
+import com.payment.model.entity.PaySeqEntity;
+
+import java.util.Optional;
 
 public interface IPayStrategy {
 
@@ -13,4 +13,8 @@ public interface IPayStrategy {
     PayResultDTO queryPay(PayQueryDTO payQueryDTO);
 
     <T> PayResultDTO payNotify(T notify);
+
+    default Optional<TxScanResultDTO> scanFinalTx(PaySeqEntity order) {
+        return Optional.empty();
+    }
 }

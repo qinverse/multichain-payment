@@ -1,11 +1,13 @@
 package com.payment.model.entity;
 
+import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -18,123 +20,61 @@ import java.util.Date;
 @Data
 @TableName(value = "pay_seq")
 public class PaySeqEntity implements Serializable {
-    /**
-     * 支付流水
-     *
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
-     */
-    @TableId
+
+    private static final long serialVersionUID = 1L;
+
+    /** 支付流水号（业务主键） */
     private String paySeq;
 
-    /**
-     * 第三方支付标识
-     *
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
-     */
-    private String thirdIdentify;
-
-    /**
-     * 支付账户
-     *
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
-     */
+    /** 付款地址 */
     private String payAccount;
 
-    /**
-     * 收款账户
-     *
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
-     */
+    /** 收款地址 */
     private String receiveAccount;
 
-    /**
-     * 支付数额
-     *
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
-     */
+    /** 支付金额 */
     private BigDecimal payAmount;
 
-    /**
-     * 其他费用例如gas
-     *
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
-     */
-    private BigDecimal fee;
-
-    /**
-     * 支付状态 0发起 1 支付中 2 支付成功 3 支付失败
-     *
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
-     */
-    private Integer status;
-
-    /**
-     * 支付类别，1rmb支付 2 eth
-     *
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
-     */
+    /** 链类型，如 eth */
     private String type;
 
     /**
-     * 支付参数
-     *
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
+     * 支付状态
+     * 0-发起
+     * 1-支付中
+     * 2-成功
+     * 3-失败
+     * 4-超时
      */
+    private Integer status;
+
+    /** 最终确认的链上交易 hash */
+    private String thirdIdentify;
+
+    /** 最终交易 nonce */
+    private Long nonce;
+
+    /** 实际链上手续费 */
+    private BigDecimal fee;
+
+    /** 最终确认区块高度 */
+    private Long blockNumber;
+
+    /** 链上确认时间 */
+    private LocalDateTime confirmedAt;
+
+    /** 支付扩展参数（下单快照） */
     private String payParam;
 
-    /**
-     * 发起支付时间
-     *
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
-     */
-    private Date payTime;
-
-    /**
-     * 第三方查询结果报文
-     *
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
-     */
+    /** 第三方 / 链上结果摘要 */
     private String thirdParam;
 
-    /**
-     * 查询次数
-     *
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
-     */
-    private Integer queryCount;
-
-    /**
-     * 账单日
-     *
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
-     */
+    /** 账单日 */
     private String billDate;
 
-    /**
-     * 修改时间
-     *
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
-     */
-    private Date modifyTime;
+    /** 支付发起时间 */
+    private LocalDateTime createdTime;
 
-    /**
-     *
-     * @mbg.generated Tue Jun 17 17:33:45 GMT+08:00 2025
-     */
-    private static final long serialVersionUID = 1L;
-
+    /** 最后更新时间 */
+    private LocalDateTime modifyTime;
 }

@@ -1,0 +1,38 @@
+server:
+  port: 8080
+  servlet:
+    context-path: /
+
+spring:
+  application:
+    name: multichain-payment
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: jdbc:mysql://localhost:3306/payment?autoReconnect=true&useUnicode=true&characterEncoding=utf8&serverTimezone=Asia/Shanghai&allowMultiQueries=true&tinyInt1isBit=false
+    driver-class-name: com.mysql.cj.jdbc.Driver
+    username: root
+    password: 123456
+    maxActive: 10
+    minIdle: 5
+    initialSize: 3
+    druid:
+      # 下面是示例，可以配置监控等高级功能
+      filters: stat,wall,slf4j
+      # 连接泄漏检测配置示例
+      max-wait: 60000
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 300000
+
+#rocketmq:
+#  name-server: 127.0.0.1:9876
+#  producer:
+#    group: multichain-pay
+#    sendMessageTimeout: 300000
+
+mybatis-plus:
+  mapper-locations: classpath:/mapper/*.xml
+  global-config:
+    db-config:
+      where-strategy: not_empty
+  configuration:
+    log-impl: org.apache.ibatis.logging.stdout.StdOutImpl

@@ -23,7 +23,10 @@ public class ChainReconcileJob {
     @Autowired
     private IPayStrategy ethStrategy;
 
-    @Scheduled(cron = "0 0 3 * * ?")
+    // 每天凌晨3点执行
+//    @Scheduled(cron = "0 0 3 * * ?")
+// 每 10 分钟执行一次
+    @Scheduled(cron = "0 0/10 * * * ?")
     public void reconcile() {
 
         List<PaySeqEntity> list = paySeqMapper.selectNotFinalConfirmed();

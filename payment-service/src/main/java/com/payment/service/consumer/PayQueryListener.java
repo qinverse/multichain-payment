@@ -15,6 +15,7 @@ import com.payment.model.dto.mq.MqGroup;
 import com.payment.model.dto.mq.MqTopic;
 import com.payment.model.entity.PaySeqEntity;
 import com.payment.model.entity.PayTxAttemptEntity;
+import com.payment.service.PayTxAttemptService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.spring.annotation.RocketMQMessageListener;
@@ -25,6 +26,7 @@ import org.springframework.dao.DuplicateKeyException;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.Optional;
@@ -48,9 +50,10 @@ public class PayQueryListener implements RocketMQListener<PayQueryDTO> {
     @Autowired
     private PaySeqMapper paySeqMapper;
     @Autowired
-    private PayTxAttemptMapper payTxAttemptMapper;
-    @Autowired
     private RocketMQTemplate rocketMQTemplate;
+
+    @Autowired
+    private PayTxAttemptService payTxAttemptService;
 
     @Override
     public void onMessage(PayQueryDTO msg) {
@@ -67,13 +70,7 @@ public class PayQueryListener implements RocketMQListener<PayQueryDTO> {
             Optional<TxScanResultDTO> scanOpt = strategy.scanFinalTx(seq);
 
             scanOpt.ifPresent(scan -> {
-                // 1. 记录 tx attempt
-                saveTxAttempt(seq, scan);
-
-                // 2. 只有 success 才回写 pay_seq
-                if (scan.isSuccess()) {
-                    updatePaySeqFinal(seq, scan);
-                }
+                payTxAttemptService.scanUpdate(seq, scan);
             });
         }
 
@@ -92,9 +89,7 @@ public class PayQueryListener implements RocketMQListener<PayQueryDTO> {
         }
 
         // ===== ③ 继续延迟 =====
-        msg.setScanCount(
-                Optional.ofNullable(msg.getScanCount()).orElse(0) + 1
-        );
+        msg.setScanCount(Optional.ofNullable(msg.getScanCount()).orElse(0) + 1);
 
         if (msg.getScanCount() >= MAX_SCAN_COUNT) {
             timeout(seq);
@@ -105,45 +100,7 @@ public class PayQueryListener implements RocketMQListener<PayQueryDTO> {
         resend(msg);
     }
 
-    /* =================== private =================== */
 
-    private void saveTxAttempt(PaySeqEntity seq, TxScanResultDTO scan) {
-
-        PayTxAttemptEntity tx = new PayTxAttemptEntity();
-        tx.setPaySeq(seq.getPaySeq());
-        tx.setTxHash(scan.getFinalTxHash());
-        tx.setFromAccount(seq.getPayAccount());
-        tx.setToAccount(seq.getReceiveAccount());
-        tx.setNonce(scan.getNonce());
-        tx.setAmount(seq.getPayAmount());
-        tx.setFee(scan.getFee());
-        tx.setBlockNumber(scan.getBlockNumber());
-        tx.setStatus(scan.getTxStatus());
-        tx.setReplacedBy(scan.getReplacedBy());
-        tx.setCreatedTime(LocalDateTime.now());
-        tx.setConfirmedAt(scan.getConfirmedAt());
-
-        try {
-            payTxAttemptMapper.insert(tx);
-        } catch (DuplicateKeyException e) {
-            // tx_hash 已存在，直接忽略
-            log.debug("tx attempt already exists, txHash={}", tx.getTxHash());
-        }
-    }
-
-    private void updatePaySeqFinal(PaySeqEntity seq, TxScanResultDTO scan) {
-
-        paySeqMapper.update(null,
-                Wrappers.lambdaUpdate(PaySeqEntity.class)
-                        .eq(PaySeqEntity::getPaySeq, seq.getPaySeq())
-                        .isNull(PaySeqEntity::getThirdIdentify)
-                        .set(PaySeqEntity::getThirdIdentify, scan.getFinalTxHash())
-                        .set(PaySeqEntity::getStatus, PayOrderStatusEnum.PAY_SUCCESS.getValue())
-                        .set(PaySeqEntity::getBlockNumber, scan.getBlockNumber())
-                        .set(PaySeqEntity::getConfirmedAt, scan.getConfirmedAt())
-                        .set(PaySeqEntity::getFee, scan.getFee())
-        );
-    }
 
     private void updatePaySeqStatus(PaySeqEntity seq, PayResultDTO r) {
 

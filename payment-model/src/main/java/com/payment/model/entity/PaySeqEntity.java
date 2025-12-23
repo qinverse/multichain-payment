@@ -1,5 +1,6 @@
 package com.payment.model.entity;
 
+import com.baomidou.mybatisplus.annotation.FieldFill;
 import com.baomidou.mybatisplus.annotation.TableField;
 import com.baomidou.mybatisplus.annotation.TableId;
 import com.baomidou.mybatisplus.annotation.TableName;
@@ -73,8 +74,11 @@ public class PaySeqEntity implements Serializable {
     private String billDate;
 
     /** 支付发起时间 */
+    /** 创建时间 */
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdTime;
 
     /** 最后更新时间 */
+    @TableField(fill = FieldFill.INSERT_UPDATE)
     private LocalDateTime modifyTime;
 }

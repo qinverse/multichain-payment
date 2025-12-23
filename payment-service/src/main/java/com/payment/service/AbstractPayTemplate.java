@@ -1,11 +1,10 @@
 package com.payment.service;
 
-import com.payment.common.result.ResultDTO;
-import com.payment.component.IPayStrategy;
-import com.payment.component.spring.SpringContextUtil;
 import com.payment.common.base.DelayLevelEnum;
 import com.payment.common.base.PayOrderStatusEnum;
 import com.payment.common.util.IDUtils;
+import com.payment.component.IPayStrategy;
+import com.payment.component.spring.SpringContextUtil;
 import com.payment.mapper.PaySeqMapper;
 import com.payment.model.dto.*;
 import com.payment.model.dto.mq.MqTopic;
@@ -13,14 +12,16 @@ import com.payment.model.entity.PaySeqEntity;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.rocketmq.client.producer.SendResult;
 import org.apache.rocketmq.spring.core.RocketMQTemplate;
+import org.checkerframework.checker.guieffect.qual.AlwaysSafe;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.Message;
 import org.springframework.messaging.support.MessageBuilder;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.ZoneId;
-import java.util.Date;
 import java.util.Optional;
 
 @Slf4j
@@ -33,6 +34,10 @@ public abstract class AbstractPayTemplate {
     @Autowired
     private RocketMQTemplate rocketMQTemplate;
 
+    @Autowired
+    private PayTxAttemptService payTxAttemptService;
+
+    @Transactional(rollbackFor = Exception.class)
     public PayResultDTO toPay(PayDTO dto) {
 
         // 1. 参数校验
@@ -104,9 +109,13 @@ public abstract class AbstractPayTemplate {
     public void updateTxtHash(PaySeqEntity paySeq) {
         PaySeqEntity lo = paySeqMapper.selectById(paySeq.getPaySeq());
         lo.setThirdIdentify(paySeq.getThirdIdentify());
+        lo.setNonce(paySeq.getNonce());
         paySeqMapper.updateById(lo);
+        payTxAttemptService.createTxAttempt(lo);
     }
 
+    @Async
+    @Transactional(rollbackFor = Exception.class)
     public void refresOrder(String paySeq) {
         PaySeqEntity lo = paySeqMapper.selectById(paySeq);
         IPayStrategy strategy = SpringContextUtil.getBeanByName(lo.getType());
@@ -116,6 +125,7 @@ public abstract class AbstractPayTemplate {
             lo.setCreatedTime(txtHash.get().getConfirmedAt());
             lo.setBlockNumber(txtHash.get().getBlockNumber());
             paySeqMapper.updateById(lo);
+            payTxAttemptService.saveOrUpdateTxAttempt(lo, txtHash.get());
             this.sendOrderedDelayMessage(lo);
         }
     }

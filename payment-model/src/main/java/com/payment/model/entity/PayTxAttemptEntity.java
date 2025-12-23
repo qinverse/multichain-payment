@@ -1,8 +1,6 @@
 package com.payment.model.entity;
 
-import com.baomidou.mybatisplus.annotation.IdType;
-import com.baomidou.mybatisplus.annotation.TableId;
-import com.baomidou.mybatisplus.annotation.TableName;
+import com.baomidou.mybatisplus.annotation.*;
 import lombok.Data;
 
 import java.math.BigDecimal;
@@ -39,6 +37,7 @@ public class PayTxAttemptEntity {
 
     private String rawTx;
 
+    @TableField(fill = FieldFill.INSERT)
     private LocalDateTime createdTime;
     private LocalDateTime confirmedAt;
 }

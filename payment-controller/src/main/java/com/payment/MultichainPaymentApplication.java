@@ -4,6 +4,9 @@ import jakarta.annotation.PostConstruct;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+
 /**
  * @author qinverse
  * @date 2025/6/23 8:37
@@ -11,6 +14,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  */
 @SpringBootApplication
 @MapperScan(basePackages = "com.payment.mapper")
+@EnableScheduling
+@EnableTransactionManagement
 public class MultichainPaymentApplication {
 
     public static void main(String[] args) {
